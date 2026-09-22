@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Worker Service — Dashboard de Background Jobs</title>
+  <meta name="description" content="Dashboard en tiempo real del Worker Service para monitorear Background Jobs, simulación de procesamiento y generación de reportes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-effects">
+    <div class="glow-orb glow-top-left"></div>
+    <div class="glow-orb glow-bottom-right"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+            <line x1="6" y1="6" x2="6.01" y2="6"></line>
+            <line x1="6" y1="18" x2="6.01" y2="18"></line>
+          </svg>
+        </div>
+        <div>
+          <div class="header-tag">PARADIGMAS DE PROGRAMACIÓN • GRUPO 6</div>
+          <h1 class="header-title">Worker Service Dashboard</h1>
+          <p class="header-subtitle">Recepción y procesamiento asíncrono de Background Jobs mediante Time Triggers</p>
+        </div>
+      </div>
+      
+      <div class="header-status-group">
+        <div class="status-pill status-live" id="live-indicator">
+          <span class="pulse-dot"></span>
+          <span class="status-text">EN VIVO (POLLING 1s)</span>
+        </div>
+        <div class="port-badge">PUERTO :3001</div>
+      </div>
+    </header>
+
+    <!-- Reactive Hero Processing Card -->
+    <section class="hero-card" id="worker-state-card">
+      <div class="hero-header">
+        <div class="hero-badge-container">
+          <div class="state-badge state-idle" id="state-badge">
+            <span class="badge-icon">●</span>
+            <span id="state-badge-text">EN ESPERA (IDLE)</span>
+          </div>
+        </div>
+        <div class="endpoint-indicator">
+          <span class="method">POST</span>
+          <span class="path">/api/jobs/process</span>
+        </div>
+      </div>
+
+      <div class="hero-body">
+        <div class="hero-main-info">
+          <h2 class="hero-title" id="hero-title">Worker Listo para Procesar</h2>
+          <p class="hero-desc" id="hero-desc">
+            Esperando invocación HTTP del Scheduler cada 10 segundos o solicitudes manuales para generar reportes...
+          </p>
+        </div>
+
+        <!-- Processing Active Details (Hidden when idle) -->
+        <div class="processing-details hidden" id="processing-details">
+          <div class="active-task-bar">
+            <div class="task-info">
+              <span class="task-label">TAREA EN EJECUCIÓN:</span>
+              <span class="task-id-mono" id="active-task-id">task-id</span>
+            </div>
+            <div class="task-time">Simulación: 1000ms</div>
+          </div>
+          <div class="progress-track">
+            <div class="progress-bar-animated" id="progress-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-footer">
+        <div class="hero-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mini-icon">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <span id="hero-footer-note">Estado síncrono simulado con retardo de 1 segundo por reporte</span>
+        </div>
+        <button class="manual-trigger-btn" id="manual-trigger-btn" title="Simular recepción de una tarea inmediata">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          Simular Job Manual
+        </button>
+      </div>
+    </section>
+
+    <!-- Metrics Overview Cards -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-emerald">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <div class="metric-data">
+          <div class="metric-label">Reportes Procesados</div>
+          <div class="metric-value" id="total-processed-count">0</div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-cyan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <div class="metric-data">
+          <div class="metric-label">Retardo de Simulación</div>
+          <div class="metric-value">1.0s</div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 20V10"></path>
+            <path d="M12 20V4"></path>
+            <path d="M6 20v-6"></path>
+          </svg>
+        </div>
+        <div class="metric-data">
+          <div class="metric-label">Tasa de Éxito</div>
+          <div class="metric-value" id="success-rate">100%</div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="2"></circle>
+            <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
+          </svg>
+        </div>
+        <div class="metric-data">
+          <div class="metric-label">Servicio Worker</div>
+          <div class="metric-value metric-value-sm" id="service-status">ONLINE</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Processed Jobs Table -->
+    <section class="table-section">
+      <div class="table-header">
+        <div>
+          <h2 class="table-title">Historial de Reportes Procesados</h2>
+          <p class="table-subtitle">Últimos 10 trabajos recibidos y completados en memoria</p>
+        </div>
+        <div class="table-counter">
+          Mostrando: <span id="table-count" class="bold-text">0</span> de 10 máx.
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="jobs-table" id="jobs-table">
+          <thead>
+            <tr>
+              <th>ESTADO</th>
+              <th>TASK ID</th>
+              <th>TIPO</th>
+              <th>RECIBIDO</th>
+              <th>PROCESADO EN</th>
+              <th>DURACIÓN</th>
+            </tr>
+          </thead>
+          <tbody id="jobs-table-body">
+            <!-- Dynamic rows will be inserted here -->
+            <tr class="empty-row" id="empty-row">
+              <td colspan="6">
+                <div class="empty-state">
+                  <div class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                  </div>
+                  <div class="empty-title">Sin reportes registrados todavía</div>
+                  <div class="empty-text">Los jobs procesados por el Worker aparecerán aquí automáticamente en tiempo real conforme el Scheduler los envíe.</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <div>Investigación II — Background Jobs &amp; Time Triggers • NestJS Microservices Demo</div>
+      <div class="footer-links">
+        <span>Scheduler: <a href="http://localhost:3000" target="_blank" rel="noopener">http://localhost:3000</a></span>
+        <span>•</span>
+        <span>Worker: <a href="http://localhost:3001" target="_blank" rel="noopener">http://localhost:3001</a></span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

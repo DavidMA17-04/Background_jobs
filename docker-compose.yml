@@ -1,0 +1,31 @@
+services:
+  worker-service:
+    build:
+      context: ./worker-service
+      dockerfile: Dockerfile
+    container_name: worker-service
+    ports:
+      - "${WORKER_PORT:-3001}:3001"
+    environment:
+      - PORT=3001
+    networks:
+      - background-net
+
+  scheduler-service:
+    build:
+      context: ./scheduler-service
+      dockerfile: Dockerfile
+    container_name: scheduler-service
+    ports:
+      - "${SCHEDULER_PORT:-3000}:3000"
+    environment:
+      - PORT=3000
+      - WORKER_SERVICE_URL=${WORKER_SERVICE_URL:-http://worker-service:3001}
+    depends_on:
+      - worker-service
+    networks:
+      - background-net
+
+networks:
+  background-net:
+    driver: bridge

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "mcp-tools-istefox": {
+      "serverUrl": "http://127.0.0.1:27201/mcp",
+      "headers": {
+        "Authorization": "Bearer YixE5W7F7_uCI3yIkP2FUokx92pWkGUhad1mMOBdg9A"
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.nestfactory.dev/cli.json",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": ["public/**/*"],
+    "watchAssets": true
+  }
+}
