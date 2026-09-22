@@ -2,13 +2,15 @@
 
 Demostración pedagógica de comunicación entre microservicios NestJS coordinados mediante un Time Trigger (Cron Job) y comunicación HTTP síncrona.
 
-## Integrantes (Grupo 6)
+## Integrantes y Reparto de Exposición (Grupo 6)
 
-- **Carlos Ruiz Galagarza**
-- **David Mendez**
-- **Sebastian Solis**
-- **Geyson Chavarría**
-- **Aaron Solano Cordero**
+| Integrante | Tema a exponer |
+|---|---|
+| **Sebastian Solis** | **1. Introducción y contexto:** El problema de los Background Jobs y objetivo pedagógico. |
+| **David Mendez** | **2. Arquitectura:** Desacoplamiento entre microservicios y contrato de API HTTP. |
+| **Geyson Chavarría** | **3. `scheduler-service`:** Time Trigger, decorador `@Cron` y despacho HTTP. |
+| **Aaron Solano Cordero** | **4. `worker-service`:** Endpoint REST, validación DTOs y procesamiento asíncrono. |
+| **Carlos Ruiz Galagarza** | **5. Orquestación y Demo:** Despliegue con Docker Compose, Dashboards Web y logs en vivo. |
 
 ## Arquitectura del Proyecto
 
