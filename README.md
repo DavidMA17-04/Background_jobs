@@ -2,6 +2,14 @@
 
 Demostración pedagógica de comunicación entre microservicios NestJS coordinados mediante un Time Trigger (Cron Job) y comunicación HTTP síncrona.
 
+## Integrantes (Grupo 6)
+
+- **Carlos Ruiz Galagarza**
+- **David Mendez**
+- **Sebastian Solis**
+- **Geyson Chavarría**
+- **Aaron Solano Cordero**
+
 ## Arquitectura del Proyecto
 
 - **`scheduler-service`**: Microservicio emisor (Time Trigger). Dispara una tarea cada 10 segundos (`@nestjs/schedule`), genera un `taskId` correlativo y realiza una petición HTTP POST al worker.

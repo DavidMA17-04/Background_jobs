@@ -6,6 +6,13 @@
 
 Investigación II de Paradigmas de Programación (Grupo 6): demo de Background Jobs / Time Triggers con dos servicios NestJS independientes que se coordinan por HTTP.
 
+### Integrantes (Grupo 6)
+- Carlos Ruiz Galagarza
+- David Mendez
+- Sebastian Solis
+- Geyson Chavarría
+- Aaron Solano Cordero
+
 - **scheduler-service**: dispara un Cron Job cada 10s (demo) usando `@nestjs/schedule`, genera `taskId` + `timestamp`, y hace `POST` al worker.
 - **worker-service**: expone `POST /api/jobs/process`, simula procesamiento, responde confirmación.
 
