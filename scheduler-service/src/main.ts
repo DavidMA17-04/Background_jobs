@@ -4,9 +4,11 @@ import { join } from 'path';
 import { existsSync } from 'fs';
 import { AppModule } from './app.module';
 
+// Punto de entrada del scheduler: arranca Nest y sirve el dashboard.
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // En Docker usa /dist/public; en local usa /src/public.
   const distPublic = join(__dirname, 'public');
   const srcPublic = join(__dirname, '..', 'src', 'public');
   const publicPath = existsSync(distPublic) ? distPublic : srcPublic;

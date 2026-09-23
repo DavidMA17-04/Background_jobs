@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { JobResponseDto } from './dto/job-response.dto';
 
+// Un job que ya se terminó de procesar.
 export interface ProcessedJobRecord {
   taskId: string;
   type: string;
@@ -13,12 +14,16 @@ export interface ProcessedJobRecord {
 
 @Injectable()
 export class JobsService {
+  // Estado actual: si está ocupado y con qué job.
   private isProcessing: boolean = false;
   private currentTaskId: string | null = null;
   private currentJobStartedAt: string | null = null;
   private totalProcessed: number = 0;
+
+  // Solo guarda los últimos 10 jobs en memoria.
   private readonly recentJobs: ProcessedJobRecord[] = [];
 
+  // Simula generar un reporte y responde PROCESSED.
   async processJob(createJobDto: CreateJobDto): Promise<JobResponseDto> {
     const { taskId, type, timestamp } = createJobDto;
 
@@ -31,7 +36,7 @@ export class JobsService {
     console.log(`[WORKER] Generando reporte...`);
 
     try {
-      // Simular procesamiento asíncrono con retardo
+      // No hay un reporte real: espera 1 segundo para simular el trabajo.
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } finally {
       this.isProcessing = false;
@@ -66,6 +71,7 @@ export class JobsService {
     };
   }
 
+  // Datos que consume el dashboard.
   getRecentJobs() {
     return {
       service: 'worker-service',
